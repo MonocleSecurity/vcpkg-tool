@@ -215,6 +215,7 @@ endif()
 
 add_executable(vcpkg ${VCPKG_SOURCES})
 target_link_libraries(vcpkg PRIVATE vcpkglib)
+target_link_libraries(vcpkg PRIVATE atomic)
 vcpkg_target_add_warning_options(vcpkg)
 if(VCPKG_ADD_SOURCELINK)
     if(VCPKG_VERSION STREQUAL "unknownhash")
@@ -249,6 +250,7 @@ if (BUILD_TESTING)
         ${VCPKG_TEST_INCLUDES}
     )
     target_link_libraries(vcpkg-test PRIVATE vcpkglib)
+    target_link_libraries(vcpkg-test PRIVATE atomic)
     vcpkg_target_add_warning_options(vcpkg-test)
 
     add_test(NAME default COMMAND vcpkg-test --order rand --rng-seed time)
