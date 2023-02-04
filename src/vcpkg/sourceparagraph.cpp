@@ -241,7 +241,7 @@ namespace vcpkg
     This is invalid; please make certain that features have distinct names.)",
                                                         scf.core_paragraph->name,
                                                         (*adjacent_equal)->name);
-                    return error_info;
+                    return std::move(error_info);
                 }
                 return nullptr;
             }
@@ -292,7 +292,7 @@ namespace vcpkg
             auto error_info = std::make_unique<ParseControlErrorInfo>();
             error_info->name = origin.to_string();
             error_info->error = maybe_dependencies.error();
-            return error_info;
+            return std::move(error_info);
         }
 
         buf.clear();
@@ -308,7 +308,7 @@ namespace vcpkg
             auto error_info = std::make_unique<ParseControlErrorInfo>();
             error_info->name = origin.to_string();
             error_info->error = maybe_default_features.error();
-            return error_info;
+            return std::move(error_info);
         }
 
         auto supports_expr = parser.optional_field(SourceParagraphFields::SUPPORTS);
@@ -329,9 +329,9 @@ namespace vcpkg
         spgh->type = Type::from_string(parser.optional_field(SourceParagraphFields::TYPE));
         auto err = parser.error_info(spgh->name.empty() ? origin : spgh->name);
         if (err)
-            return err;
+            return std::move(err);
         else
-            return spgh;
+            return std::move(spgh);
     }
 
     static ParseExpected<FeatureParagraph> parse_feature_paragraph(StringView origin, Paragraph&& fields)
@@ -355,14 +355,14 @@ namespace vcpkg
             auto error_info = std::make_unique<ParseControlErrorInfo>();
             error_info->name = origin.to_string();
             error_info->error = maybe_dependencies.error();
-            return error_info;
+            return std::move(error_info);
         }
 
         auto err = parser.error_info(fpgh->name.empty() ? origin : fpgh->name);
         if (err)
-            return err;
+            return std::move(err);
         else
-            return fpgh;
+            return std::move(fpgh);
     }
 
     ParseExpected<SourceControlFile> SourceControlFile::parse_control_file(StringView origin,
@@ -372,7 +372,7 @@ namespace vcpkg
         {
             auto ret = std::make_unique<ParseControlErrorInfo>();
             ret->name = origin.to_string();
-            return ret;
+            return std::move(ret);
         }
 
         auto control_file = std::make_unique<SourceControlFile>();
@@ -396,10 +396,10 @@ namespace vcpkg
 
         if (auto maybe_error = canonicalize(*control_file))
         {
-            return maybe_error;
+            return std::move(maybe_error);
         }
 
-        return control_file;
+        return std::move(control_file);
     }
 
     struct PlatformExprDeserializer : Json::IDeserializer<PlatformExpression::Expr>
@@ -1256,7 +1256,7 @@ namespace vcpkg
             auto err = std::make_unique<ParseControlErrorInfo>();
             err->name = origin.to_string();
             err->other_errors = std::move(reader.errors());
-            return err;
+            return std::move(err);
         }
         else if (auto p = res.get())
         {

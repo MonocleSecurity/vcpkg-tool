@@ -2053,7 +2053,7 @@ namespace vcpkg
                     }
                 }
             }
-            return ret;
+            return std::move(ret);
         }
     }
 

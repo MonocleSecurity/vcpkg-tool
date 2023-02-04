@@ -1310,7 +1310,7 @@ namespace vcpkg
         install_providers_for(args, paths);
     }
 
-    void BinaryCache::install_providers(std::vector<std::unique_ptr<IBinaryProvider>>&& providers)
+    void BinaryCache::install_providers(std::vector<std::shared_ptr<IBinaryProvider>>&& providers)
     {
         Checks::check_exit(
             VCPKG_LINE_INFO, m_status.empty(), "Attempted to install additional providers in active binary cache");
@@ -2238,7 +2238,7 @@ ExpectedS<BinaryConfigParserState> vcpkg::create_binary_providers_from_configs_p
     return s;
 }
 
-ExpectedS<std::vector<std::unique_ptr<IBinaryProvider>>> vcpkg::create_binary_providers_from_configs(
+ExpectedS<std::vector<std::shared_ptr<IBinaryProvider>>> vcpkg::create_binary_providers_from_configs(
     const VcpkgPaths& paths, View<std::string> args)
 {
     std::string env_string = get_environment_variable("VCPKG_BINARY_SOURCES").value_or("");
@@ -2262,10 +2262,10 @@ ExpectedS<std::vector<std::unique_ptr<IBinaryProvider>>> vcpkg::create_binary_pr
     }
 
     auto& s = sRawHolder.value_or_exit(VCPKG_LINE_INFO);
-    std::vector<std::unique_ptr<IBinaryProvider>> providers;
+    std::vector<std::shared_ptr<IBinaryProvider>> providers;
     if (!s.archives_to_read.empty() || !s.archives_to_write.empty() || !s.url_templates_to_put.empty())
     {
-        providers.push_back(std::make_unique<ArchivesBinaryProvider>(paths,
+        providers.push_back(std::make_shared<ArchivesBinaryProvider>(paths,
                                                                      std::move(s.archives_to_read),
                                                                      std::move(s.archives_to_write),
                                                                      std::move(s.url_templates_to_put),
@@ -2274,32 +2274,32 @@ ExpectedS<std::vector<std::unique_ptr<IBinaryProvider>>> vcpkg::create_binary_pr
 
     if (!s.gcs_read_prefixes.empty() || !s.gcs_write_prefixes.empty())
     {
-        providers.push_back(std::make_unique<GcsBinaryProvider>(
+        providers.push_back(std::make_shared<GcsBinaryProvider>(
             paths, std::move(s.gcs_read_prefixes), std::move(s.gcs_write_prefixes)));
     }
 
     if (!s.aws_read_prefixes.empty() || !s.aws_write_prefixes.empty())
     {
-        providers.push_back(std::make_unique<AwsBinaryProvider>(
+        providers.push_back(std::make_shared<AwsBinaryProvider>(
             paths, std::move(s.aws_read_prefixes), std::move(s.aws_write_prefixes), s.aws_no_sign_request));
     }
 
     if (!s.cos_read_prefixes.empty() || !s.cos_write_prefixes.empty())
     {
-        providers.push_back(std::make_unique<CosBinaryProvider>(
+        providers.push_back(std::make_shared<CosBinaryProvider>(
             paths, std::move(s.cos_read_prefixes), std::move(s.cos_write_prefixes)));
     }
 
     if (!s.url_templates_to_get.empty())
     {
         providers.push_back(
-            std::make_unique<HttpGetBinaryProvider>(paths, std::move(s.url_templates_to_get), s.secrets));
+            std::make_shared<HttpGetBinaryProvider>(paths, std::move(s.url_templates_to_get), s.secrets));
     }
 
     if (!s.sources_to_read.empty() || !s.sources_to_write.empty() || !s.configs_to_read.empty() ||
         !s.configs_to_write.empty())
     {
-        providers.push_back(std::make_unique<NugetBinaryProvider>(paths,
+        providers.push_back(std::make_shared<NugetBinaryProvider>(paths,
                                                                   std::move(s.sources_to_read),
                                                                   std::move(s.sources_to_write),
                                                                   std::move(s.configs_to_read),

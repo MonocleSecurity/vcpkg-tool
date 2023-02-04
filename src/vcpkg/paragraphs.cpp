@@ -375,7 +375,7 @@ namespace vcpkg::Paragraphs
         auto error_info = std::make_unique<ParseControlErrorInfo>();
         error_info->name = origin.to_string();
         error_info->error = std::move(error);
-        return error_info;
+        return std::move(error_info);
     }
 
     ParseExpected<SourceControlFile> try_load_port_text(const std::string& text,
@@ -398,7 +398,7 @@ namespace vcpkg::Paragraphs
         auto error_info = std::make_unique<ParseControlErrorInfo>();
         error_info->name = origin.to_string();
         error_info->error = pghs.error();
-        return error_info;
+        return ParseExpected<SourceControlFile>(std::move(error_info));
     }
 
     ParseExpected<SourceControlFile> try_load_port(const Filesystem& fs, const Path& port_directory)
@@ -418,7 +418,7 @@ namespace vcpkg::Paragraphs
                 error_info->name = port_name;
                 error_info->error =
                     Strings::format("Failed to load manifest file for port: %s\n", manifest_path, ec.message());
-                return error_info;
+                return std::move(error_info);
             }
         }
         else
@@ -441,7 +441,7 @@ namespace vcpkg::Paragraphs
             auto error_info = std::make_unique<ParseControlErrorInfo>();
             error_info->name = port_name;
             error_info->error = pghs.error();
-            return error_info;
+            return std::move(error_info);
         }
 
         auto error_info = std::make_unique<ParseControlErrorInfo>();
@@ -455,7 +455,7 @@ namespace vcpkg::Paragraphs
             error_info->error = Strings::concat("The port directory (", port_directory, ") does not exist");
         }
 
-        return error_info;
+        return std::move(error_info);
     }
 
     ExpectedS<BinaryControlFile> try_load_cached_package(const Filesystem& fs,

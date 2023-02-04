@@ -116,7 +116,7 @@ namespace vcpkg
 
     ExpectedS<BinaryConfigParserState> create_binary_providers_from_configs_pure(const std::string& env_string,
                                                                                  View<std::string> args);
-    ExpectedS<std::vector<std::unique_ptr<IBinaryProvider>>> create_binary_providers_from_configs(
+    ExpectedS<std::vector<std::shared_ptr<IBinaryProvider>>> create_binary_providers_from_configs(
         const VcpkgPaths& paths, View<std::string> args);
 
     struct BinaryCache
@@ -124,7 +124,7 @@ namespace vcpkg
         BinaryCache() = default;
         explicit BinaryCache(const VcpkgCmdArguments& args, const VcpkgPaths& paths);
 
-        void install_providers(std::vector<std::unique_ptr<IBinaryProvider>>&& providers);
+        void install_providers(std::vector<std::shared_ptr<IBinaryProvider>>&& providers);
         void install_providers_for(const VcpkgCmdArguments& args, const VcpkgPaths& paths);
 
         /// Attempts to restore the package referenced by `action` into the packages directory.
@@ -144,7 +144,7 @@ namespace vcpkg
 
     private:
         std::unordered_map<std::string, CacheStatus> m_status;
-        std::vector<std::unique_ptr<IBinaryProvider>> m_providers;
+        std::vector<std::shared_ptr<IBinaryProvider>> m_providers;
     };
 
     ExpectedS<DownloadManagerConfig> parse_download_configuration(const Optional<std::string>& arg);
