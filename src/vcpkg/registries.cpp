@@ -774,7 +774,7 @@ namespace
                 auto res = std::make_unique<BuiltinGitRegistryEntry>(m_paths);
                 res->port_name.assign(port_name.data(), port_name.size());
                 res->port_versions_soa.assign(std::move(*version_entries));
-                return res;
+                return std::move(res);
             });
     }
 
@@ -858,7 +858,7 @@ namespace
                     res->version_paths.push_back(std::move(version_entry.p));
                 }
 
-                return res;
+                return std::move(res);
             });
     }
 

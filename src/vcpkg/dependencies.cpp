@@ -2044,7 +2044,7 @@ namespace vcpkg
 
                 return msg;
             }
-            return ret;
+            return std::move(ret);
         }
     }
 

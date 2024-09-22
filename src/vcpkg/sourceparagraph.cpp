@@ -396,7 +396,7 @@ namespace vcpkg
             return std::move(*error);
         }
 
-        return spgh;
+        return std::move(spgh);
     }
 
     static ExpectedL<std::unique_ptr<FeatureParagraph>> parse_feature_paragraph(StringView origin, Paragraph&& fields)
@@ -431,7 +431,7 @@ namespace vcpkg
             return std::move(*error);
         }
 
-        return fpgh;
+        return std::move(fpgh);
     }
 
     ExpectedL<std::unique_ptr<SourceControlFile>> SourceControlFile::parse_control_file(
@@ -462,7 +462,7 @@ namespace vcpkg
             return std::move(*error);
         }
 
-        return control_file;
+        return std::move(control_file);
     }
 
     struct PlatformExprDeserializer final : Json::IDeserializer<PlatformExpression::Expr>
